@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Stopwatch App</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      text-align: center;
+      width: 300px;
+    }
+    .time-display {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    .buttons button {
+      margin: 0.25rem;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .buttons button:hover {
+      background-color: #ddd;
+    }
+    .lap-list {
+      margin-top: 1rem;
+      text-align: left;
+      max-height: 150px;
+      overflow-y: auto;
+    }
+    .lap-list li {
+      font-size: 0.9rem;
+      border-bottom: 1px solid #eee;
+      padding: 0.3rem 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="time-display" id="display">00:00:00</div>
+    <div class="buttons">
+      <button onclick="start()">Start</button>
+      <button onclick="pause()">Pause</button>
+      <button onclick="reset()">Reset</button>
+      <button onclick="lap()">Lap</button>
+    </div>
+    <ul class="lap-list" id="laps"></ul>
+  </div>
+
+  <script>
+    let [hours, minutes, seconds] = [0, 0, 0];
+    let timer = null;
+
+    function updateDisplay() {
+      const h = String(hours).padStart(2, '0');
+      const m = String(minutes).padStart(2, '0');
+      const s = String(seconds).padStart(2, '0');
+      document.getElementById("display").innerText = `${h}:${m}:${s}`;
+    }
+
+    function stopwatch() {
+      seconds++;
+      if (seconds === 60) {
+        seconds = 0;
+        minutes++;
+        if (minutes === 60) {
+          minutes = 0;
+          hours++;
+        }
+      }
+      updateDisplay();
+    }
+
+    function start() {
+      if (timer !== null) return;
+      timer = setInterval(stopwatch, 1000);
+    }
+
+    function pause() {
+      clearInterval(timer);
+      timer = null;
+    }
+
+    function reset() {
+      pause();
+      [hours, minutes, seconds] = [0, 0, 0];
+      updateDisplay();
+      document.getElementById("laps").innerHTML = '';
+    }
+
+    function lap() {
+      const lapTime = document.getElementById("display").innerText;
+      const lapList = document.getElementById("laps");
+      const li = document.createElement("li");
+      li.innerText = `Lap ${lapList.children.length + 1}: ${lapTime}`;
+      lapList.appendChild(li);
+    }
+  </script>
+</body>
+</html>
